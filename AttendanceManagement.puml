@@ -1,0 +1,14 @@
+@startuml AttendanceManagement
+actor Teacher
+participant AttendanceManagement
+participant Attendance
+
+Teacher -> AttendanceManagement: markAttendance(student, course, date, status)
+AttendanceManagement -> Attendance: new(student, course, date, status)
+AttendanceManagement -> AttendanceManagement: addAttendanceRecord(attendance)
+Teacher -> AttendanceManagement: addRemarks(student, remarks)
+AttendanceManagement -> Attendance: updateRemarks(remarks)
+Teacher -> AttendanceManagement: generateAttendanceReport(filters)
+AttendanceManagement -> AttendanceManagement: filterAttendanceRecords(filters)
+AttendanceManagement --> Teacher: attendanceReport
+@enduml
