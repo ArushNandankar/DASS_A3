@@ -1,0 +1,21 @@
+@startuml PayrollManagement
+actor HRManager
+participant PayrollManagement
+participant EmployeePayroll
+participant SalaryStructure
+participant PayslipApproval
+
+HRManager -> PayrollManagement: processPayroll()
+PayrollManagement -> SalaryStructure: getBasicPay(employeeRole)
+SalaryStructure --> PayrollManagement: basicPay
+PayrollManagement -> SalaryStructure: getAllowances()
+SalaryStructure --> PayrollManagement: allowances
+PayrollManagement -> SalaryStructure: getDeductions()
+SalaryStructure --> PayrollManagement: deductions
+PayrollManagement -> EmployeePayroll: new(employee, payPeriod, basicPay, allowances, deductions)
+EmployeePayroll -> EmployeePayroll: calculateGrossPay()
+EmployeePayroll -> EmployeePayroll: calculateNetPay()
+EmployeePayroll --> PayrollManagement: payslip
+PayrollManagement -> PayslipApproval: approvePayslip(payslip)
+PayslipApproval --> HRManager: payslipStatus
+@enduml
