@@ -1,0 +1,19 @@
+@startuml StudentAdmissionProcess
+actor Student
+participant StudentAdmission
+participant AdmissionForm
+participant StudentDirectory
+
+Student -> StudentAdmission: submitAdmissionForm()
+StudentAdmission -> AdmissionForm: new()
+StudentAdmission -> AdmissionForm: addStudentDetails(studentDetails)
+StudentAdmission -> AdmissionForm: addPreviousEducationDetails(educationDetails)
+StudentAdmission -> AdmissionForm: addGuardianDetails(guardianDetails)
+StudentAdmission -> AdmissionForm: addEmergencyContact(emergencyContact)
+StudentAdmission -> AdmissionForm: uploadPhoto(photo)
+StudentAdmission -> AdmissionForm: addCustomField(fieldName, fieldValue)
+StudentAdmission -> AdmissionForm: generateUniqueID()
+AdmissionForm --> StudentAdmission: uniqueID
+StudentAdmission -> StudentDirectory: addStudent(student)
+StudentDirectory --> Student: admissionConfirmation
+@enduml
