@@ -1,0 +1,539 @@
+@startuml Assignment-3
+scale 0.5
+package "Institute Management System" {
+
+    package "Authentication" {
+        class UserManager {
+            - users: List<User>
+            + addUser(user: User): void
+            + removeUser(user: User): void
+            + updateUser(user: User): void
+            + getUserByUsername(username: String): User
+            + searchUsers(criteria: SearchCriteria): List<User>
+            + viewUserProfile(user: User)
+            + editUserPassword(user: User, newPassword: String)
+            + setUserPrivileges(user: User, privileges: List<Privilege>)
+        }
+
+        class Privilege {
+            - name: String
+            - description: String
+        }
+
+        class SearchCriteria {
+            - keyword: String
+            - filters: Map<String, String>
+        }
+        class RoleManager {
+            - roles: List<Role>
+            + addRole(role: Role): void
+            + removeRole(role: Role): void
+            + updateRole(role: Role): void
+            + getRoleByName(roleName: String): Role
+        }
+        interface AuthenticationInterface {
+            +login(username: String, password: String): boolean
+            +logout()
+        }
+        class AuthenticationService {
+            -userManager: UserManager
+            -roleManager: RoleManager
+            +login(username: String, password: String): boolean
+            +logout()
+        }
+        RoleManager --> Privilege
+    }
+
+    package "Dashboard" {
+        class Dashboard {
+            -user: User
+            +reportCenter: ReportCenter
+            +showNews()
+            +showAnnouncements()
+            +showQuickLinks()
+            +navigateToPage(page: Page)
+            +searchBar()
+            +manageCoursesBatches()
+            +userManagement()
+            +financeManagement()
+            +attendanceManagement()
+            +examinationManagement()
+            +newsManagement()
+            +multipleDashboards()
+            +searchStudents(criteria: SearchCriteria)
+            +viewExamReport(exam: Exam)
+            +viewStatisticalReport(exam: Exam)
+            +viewChartReport(exam: Exam)
+            +iconicFeatures: List<Feature>
+        }
+        class Settings {
+            - language: String
+            - country: String
+            - currency: String
+            - timeZone: String
+        }
+        enum Page {
+            ADMISSION,
+            STUDENT_DETAILS,
+            FEES,
+            ATTENDANCE,
+            EXAMINATION,
+            TIMETABLE,
+            HR,
+            PAYROLL,
+            RECORDS
+        }
+    }
+
+    package "Student Management" {
+        class Student {
+            - id : int
+            - name : String
+            - email : String
+            - phone : String
+            + admit()
+            + update()
+            + getDetails()
+        }
+        class StudentCategory {
+            - name: String
+            - description: String
+        }
+        class StudentAdmission {
+            -admissionForm: AdmissionForm
+            +submitAdmissionForm()
+            +generateUniqueID()
+            +addGuardianDetails()
+            +addEmergencyContact()
+            +uploadPhoto()
+            +addCustomField()
+            +generateUniqueID(): String
+            +addCustomField(fieldName: String, fieldValue: String)
+        }
+        class AdmissionForm {
+            -studentDetails: StudentDetails
+            -previousEducationDetails: List<EducationDetails>
+            -guardianDetails: List<GuardianDetails>
+            -emergencyContact: EmergencyContact
+            -photo: Photo
+            -customFields: Map<String, String>
+        }
+        class StudentDirectory {
+            -students: Map<String, Student>
+            +searchStudents(criteria: SearchCriteria): List<Student>
+            +getStudentByID(id: String): Student
+        }
+        class StudentDetails {
+            -name: String
+            -dateOfBirth: Date
+            -address: String
+            -contact: String
+        }
+        class EducationDetails {
+            -institution: String
+            -qualification: String
+            -yearOfPassing: int
+        }
+        class GuardianDetails {
+            -name: String
+            -contact: String
+            -relation: String
+        }
+        class EmergencyContact {
+            -name: String
+            -contact: String
+            -relation: String
+        }
+        class Photo {
+            -data: byte[]
+        }
+        Student --> StudentCategory
+    }
+
+    package "Academic Management" {
+        class Course {
+            -name: String
+            -code: String
+            -credits: int
+        }
+        class Teacher {
+            -name: String
+            -email: String
+            -expertise: List<String>
+        }
+        class Batch {
+            -name: String
+            -students: List<Student>
+            -courses: List<Course>
+            -teachers: List<Teacher>
+            +batchTransfer()
+            +graduation()
+        }
+        class Subject {
+            -name: String
+            -code: String
+            -isElective: boolean
+        }
+        class Exam {
+            - id : int
+            - name : String
+            -examType: ExamType
+            +groupExams(exams: List<Exam>)
+            + create()
+            + evaluate()
+            + generateReports()
+        }
+        enum ExamType {
+            GRADE_BASED,
+            MARKS_BASED
+        }
+        class ReportCenter {
+            -examReports: Map<Exam, List<ExamReport>>
+            +generateReport(exam: Exam): ExamReport
+            +generateStatisticalReport(exam: Exam)
+            +generateChartReport(exam: Exam)
+        }
+        class ExamReport {
+            -student: Student
+            -exam: Exam
+            -score: int
+            -remarks: String
+        }
+        class Attendance {
+            -student: Student
+            -course: Course
+            -date: Date
+            -status: AttendanceStatus
+        }
+        class TimeTable {
+            -batch: Batch
+            -classSchedule: Map<DayOfWeek, List<ClassPeriod>>
+        }
+        class ExamSchedule {
+            -examName: String
+            -examDate: Date
+            -subjectList: List<Subject>
+        }
+        class ExamResult {
+            -student: Student
+            -subjectMarks: Map<Subject, Integer>
+            -totalMarks: Integer
+            -grade: Grade
+            -evaluationMethod: EvaluationMethod
+        }
+        enum EvaluationMethod {
+            GPA,
+            CCE,
+            CWA
+        }
+        class AttendanceManagement {
+            -attendanceRecords: Map<Student, AttendanceRecord>
+            +markAttendance()
+            +addRemarks()
+            +generateAttendanceReport()
+        }
+        class AttendanceRecord {
+            -date: Date
+            -status: AttendanceStatus
+            -remarks: String
+        }
+    }
+
+    package "Human Resource" {
+        class Employee {
+            - id : int
+            - name : String
+            - role : EmployeeRole
+            + hire()
+            + terminate()
+            + updateDetails()
+        }
+        class EmployeeAdmission {
+            -admissionForm: AdmissionForm
+            +submitAdmissionForm()
+            +addCustomField()
+        }
+        class EmployeeRole {
+            -roleName: String
+            -responsibilities: List<String>
+        }
+        class EmployeePayroll {
+            -employee: Employee
+            -payPeriod: PayPeriod
+            -grossPay: double
+            -deductions: List<Deduction>
+            -netPay: double
+            +approvePayslip()
+            +rejectPayslip()
+        }
+        class PayrollManagement {
+            -employees: List<Employee>
+            +managePayroll()
+            +advancedEmployeeSearch()
+        }
+        class LeaveManagement {
+            -employee: Employee
+            -leaveType: LeaveType
+            -startDate: Date
+            -endDate: Date
+            -status: LeaveStatus
+            +manageLeaveRequests()
+        }
+        class HumanResourceManagement {
+            -employees: List<Employee>
+            +managePayroll()
+            +leaveManagement()
+            +employeeSearch()
+        }
+        Employee --> EmployeeAdmission
+        HumanResourceManagement *-- PayrollManagement
+        EmployeePayroll ..> PayrollManagement
+    }
+
+    package "Attendance" {
+        class AttendanceManagement {
+            -attendanceRecords: Map<Student, AttendanceRecord>
+            +markAttendance()
+            +addRemarks()
+            +generateAttendanceReport()
+            +filterAttendanceReport(filters: AttendanceFilter)
+        }
+        class AttendanceFilter {
+            -date: Date
+            -batchOrStudent: String
+            -status: AttendanceStatus
+        }
+    }
+
+    package "Finance" {
+        class FeeManagement {
+            - feeStructure : Map<String, Double>
+            + calculateFee()
+            + payFee()
+            + generateReport()
+            + analyzeDefaulters()
+            + instantFeeSubmission()
+        }
+        class FeeStructure {
+            -tuitionFee: double
+            -otherFees: Map<String, Double>
+        }
+        class ExpenseManagement {
+            -expenses: List<Expense>
+            +addExpense(expense: Expense)
+            +generateExpenseReport()
+            +manageExpenseCategories()
+        }
+        class Expense {
+            -date: Date
+            -category: ExpenseCategory
+            -amount: double
+            -description: String
+        }
+        class IncomeManagement {
+            -incomes: List<Income>
+            +addIncome(income: Income)
+            +generateIncomeReport()
+            +manageIncomeSources()
+        }
+        class Income {
+            -date: Date
+            -source: IncomeSource
+            -amount: double
+            -description: String
+        }
+        class Accounting {
+            -expenses: ExpenseManagement
+            -incomes: IncomeManagement
+            +generateFinancialReport()
+            +performAudit()
+            +manageAssets()
+            +manageLiabilities()
+            +manageDonations()
+        }
+        class PayslipApproval {
+            +approvePayslip(payslip: Payslip)
+            +rejectPayslip(payslip: Payslip)
+        }
+        class SalaryManagement {
+            -salaryStructure: SalaryStructure
+            +processPayroll()
+            +generatePayslips()
+        }
+        class SalaryStructure {
+            -basicPay: Map<EmployeeRole, Double>
+            -allowances: List<Allowance>
+            -deductions: List<Deduction>
+        }
+        SalaryManagement --> PayslipApproval
+    }
+
+    package "Communication" {
+        class Messaging {
+            -recipients: List<User>
+            -subject: String
+            -message: String
+            +sendMessage()
+            +sendSMSToSingle()
+            +sendSMSToGroup()
+            +sendSMSToAll()
+            +recordCommunication(student: Student, message: String)
+        }
+        class News {
+            - id : int
+            - title : String
+            - content : String
+            + create()
+            + update()
+            + delete()
+            + searchNews(criteria: SearchCriteria)
+            + viewAllNews()
+            + addComment(newsId: int, comment: String)
+            + deleteComment(commentId: int)
+        }
+        News --> SearchCriteria
+    }
+
+    package "Records Management" {
+        class RecordsManagement {
+            -studentRecords: Map<Student, StudentRecord>
+            -employeeRecords: Map<Employee, EmployeeRecord>
+            +searchRecords()
+            +updateRecords()
+        }
+        class StudentRecord {
+            -admissionDetails: AdmissionForm
+            -attendanceRecords: List<AttendanceRecord>
+            -examResults: List<ExamResult>
+            -feePayments: List<FeePayment>
+        }
+        class EmployeeRecord {
+            -employeeDetails: Employee
+            -salaryRecords: List<Payslip>
+            -leaveRecords: List<LeaveRecord>
+        }
+        class Payslip {
+            -employee: Employee
+            -payPeriod: PayPeriod
+            -grossPay: double
+            -deductions: List<Deduction>
+            -netPay: double
+        }
+        class LeaveRecord {
+            -employee: Employee
+            +startDate: Date
+            +endDate: Date
+            +leaveType: String
+            +status: String
+            +applyLeave(): void
+            +cancelLeave(): void
+            +approveLeave(): void
+            +rejectLeave(): void
+        }
+    }
+
+    package "Timetable Management" {
+        class TimetableManagement {
+            -timetables: Map<Batch, Timetable>
+            +createTimetable()
+            +editTimetable()
+            +viewTimetable()
+            +alertSubjectLimits()
+            +alertEmployeeSubjectLimits()
+            +createTimetableInAdvance()
+            +deleteTimetable()
+        }
+        class Timetable {
+            -batch: Batch
+            -classSchedule: Map<DayOfWeek, List<ClassPeriod>>
+        }
+        class ClassPeriod {
+            -startTime: Time
+            -endTime: Time
+            -subject: Subject
+            -teacher: Teacher
+        }
+        class Tutor {
+            -name: String
+            -email: String
+            -expertise: List<String>
+        }
+        Batch ..> Tutor
+    }
+
+
+    AuthenticationService ..|> AuthenticationInterface
+    AuthenticationService --> UserManager
+    AuthenticationService --> RoleManager
+
+    UserManager ..> RoleManager
+    UserManager ..> Student
+    UserManager ..> Employee
+
+    Student --> StudentAdmission
+    StudentAdmission --> AdmissionForm
+    AdmissionForm *-- StudentDetails
+    AdmissionForm *-- EducationDetails
+    AdmissionForm *-- GuardianDetails
+    AdmissionForm *-- EmergencyContact
+    AdmissionForm *-- Photo
+
+    Student --> StudentDetails
+    Student ..> Attendance
+    Student ..> Exam
+
+    Exam ..> ExamReport
+    Exam ..> Attendance
+    Exam ..> Course
+    Exam ..> Batch
+    Exam --> ExamSchedule
+    Exam *-- ExamResult
+
+    Course o-- Batch
+    Batch ..> TimeTable
+
+    Employee ..> EmployeePayroll
+    Employee ..> LeaveManagement
+    Employee --> EmployeeRole
+
+    FeeManagement ..> Student
+    FeeManagement --> FeeStructure
+
+    ExpenseManagement ..> EmployeePayroll
+    IncomeManagement ..> FeeManagement
+    Accounting ..> ExpenseManagement
+    Accounting ..> IncomeManagement
+    SalaryManagement --> SalaryStructure
+
+    Messaging ..> Student
+    Messaging ..> Employee
+    News ..> Student
+    News ..> Employee
+
+    RecordsManagement *-- StudentRecord
+    RecordsManagement *-- EmployeeRecord
+    StudentRecord --> AdmissionForm
+    StudentRecord *-- AttendanceRecord
+    StudentRecord *-- ExamResult
+    EmployeeRecord --> Employee
+    EmployeeRecord *-- Payslip
+    EmployeeRecord *-- LeaveRecord
+
+    TimetableManagement *-- Timetable
+    Timetable *-- ClassPeriod
+
+    Dashboard --> AuthenticationService
+    Dashboard --> Page
+    Dashboard --> Communication
+    Dashboard --> UserManager
+    Dashboard --> PayrollManagement
+    Dashboard --> AttendanceManagement
+    Dashboard --> FeeManagement
+    Dashboard --> ExpenseManagement
+    Dashboard --> IncomeManagement
+    Dashboard --> Accounting
+    Dashboard --> Messaging
+    Dashboard --> News
+    Dashboard --> TimetableManagement
+}
+@enduml
